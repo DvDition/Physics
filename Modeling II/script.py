@@ -127,7 +127,6 @@ print(f"t_exit (теоретич.) = {t_exit:.6e} с")
 print(f"t_sim (реально, по симуляции) = {t_sim:.6e} с")
 print(f"V_кон = {V_final:.6e} м/с")
 
-# --- графики ---
 plt.figure(figsize=(10, 8))
 plt.subplot(2,2,1)
 plt.plot(X, Y)
