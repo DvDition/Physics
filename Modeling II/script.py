@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 e = 1.602176634e-19
-me = 9.10938356e-31
+mass_e = 9.10938356e-31
 
 r = 8.5e-2
 R = 18e-2
@@ -13,11 +13,11 @@ gap = R - r
 y0 = gap / 2.0
 vy0 = 0.0
 
-lnRR = np.log(R / r)
-t_exit = L / Vx
+ln = np.log(R / r)
+t = L / Vx
 
 def ay(y, U):
-    return -e * U / (me * (r + y) * lnRR)
+    return -e * U / (mass_e * (r + y) * ln)
 
 def simulate(U, dt=1e-11, save=False, max_steps=10_000_000):
     t = 0.0
@@ -32,7 +32,7 @@ def simulate(U, dt=1e-11, save=False, max_steps=10_000_000):
         AY = [ay(y, U)]
 
     steps = 0
-    while t < t_exit and steps < max_steps:
+    while t < t and steps < max_steps:
         y_old, vy_old, t_old = y, vy, t
 
         def f1(y, vy): return vy
@@ -96,17 +96,17 @@ def find_min_U(U_start=1.0, dt=1e-11):
     U_low = 0.0
     U_high = U_start
     for _ in range(60):
-        collided, _ = simulate(U_high, dt=dt, save=False)
-        if collided:
+        collision, _ = simulate(U_high, dt=dt, save=False)
+        if collision:
             break
         U_high *= 2.0
     else:
-        raise RuntimeError("Не удалось найти U_high при котором происходит столкновение")
+        raise RuntimeError("Не удалось найти U при котором происходит столкновение")
 
     for _ in range(40):
         U_mid = 0.5 * (U_low + U_high)
-        collided, _ = simulate(U_mid, dt=dt, save=False)
-        if collided:
+        collision, _ = simulate(U_mid, dt=dt, save=False)
+        if collision:
             U_high = U_mid
         else:
             U_low = U_mid
@@ -123,8 +123,8 @@ vy_final = VY[-1]
 V_final = np.sqrt(Vx**2 + vy_final**2)
 
 print(f"U_min = {U_min:.6f} В")
-print(f"t_exit (теоретич.) = {t_exit:.6e} с")
-print(f"t_sim (реально, по симуляции) = {t_sim:.6e} с")
+print(f"t = {t:.6e} с")
+print(f"t_sim = {t_sim:.6e} с")
 print(f"V_кон = {V_final:.6e} м/с")
 
 plt.figure(figsize=(10, 8))
